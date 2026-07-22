@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRM/36 — плёночная лаборатория</title>
+<meta name="description" content="FRM/36 — проявка, сканирование и печать плёнки. Отправь ролик — получи негативы, сканы и отпечатки.">
+
+<!-- Fraunces — витринный шрифт с характером старой печати; Work Sans — рабочий гротеск;
+     Space Mono — техническая маркировка (ISO, выдержка, номера кадров) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="flash" id="flash"></div>
+
+<!-- ================= ШАПКА ================= -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <a href="#top" class="logo">
+      <span class="logo-frame">FRM</span><span class="logo-slash">/36</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#process">Процесс</a>
+      <a href="#stocks">Плёнки</a>
+      <a href="#sheet">Контрольки</a>
+      <a href="#pricing">Цены</a>
+      <a href="#about">Лаборатория</a>
+      <a href="#contact" class="nav-cta">Заявка</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Меню"><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= ГЛАВНАЯ ================= -->
+  <section class="hero">
+    <div class="filmstrip filmstrip-top" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="status-line reveal">
+        <span class="status-dot"></span>
+        приём плёнки открыт — сдай ролик до 19:00, получишь сканы через 48 часов
+      </div>
+
+      <h1 class="hero-title reveal">
+        Плёнка помнит то,<br>что забывает цифра
+      </h1>
+
+      <p class="hero-sub reveal">
+        Ручная проявка C-41, ЧБ и E-6, барабанное сканирование в 4000 dpi
+        и отпечатки на фотобумаге. Один ролик за раз — без конвейера.
+      </p>
+
+      <div class="hero-actions reveal">
+        <button class="btn btn-shutter" id="ctaBtn">
+          <span class="shutter-ring"></span> Отправить плёнку
+        </button>
+        <a href="#process" class="btn btn-outline">Как это работает</a>
+      </div>
+    </div>
+
+    <div class="filmstrip filmstrip-bottom" aria-hidden="true"></div>
+  </section>
+
+  <!-- ================= ПРОЦЕСС ================= -->
+  <section id="process" class="section">
+    <div class="section-head reveal">
+      <span class="kicker">кадры 01–04</span>
+      <h2 class="section-title">Путь ролика</h2>
+    </div>
+
+    <div class="roll" id="rollSteps">
+      <!-- кадры процесса рендерятся через script.js -->
+    </div>
+  </section>
+
+  <!-- ================= ПЛЁНКИ ================= -->
+  <section id="stocks" class="section">
+    <div class="section-head reveal">
+      <span class="kicker">что мы проявляем</span>
+      <h2 class="section-title">Плёночные эмульсии</h2>
+    </div>
+
+    <div class="stock-grid" id="stockGrid">
+      <!-- карточки плёнок рендерятся через script.js -->
+    </div>
+  </section>
+
+  <!-- ================= КОНТРОЛЬКИ / ГАЛЕРЕЯ ================= -->
+  <section id="sheet" class="section sheet-section">
+    <div class="section-head reveal">
+      <span class="kicker">свет на столе</span>
+      <h2 class="section-title">Контрольный лист</h2>
+      <p class="section-note">Наведи лупу на негатив — увидишь позитив, как на столе ретушёра.</p>
+    </div>
+
+    <div class="contact-sheet reveal" id="contactSheet">
+      <!-- кадры негативов рендерятся через script.js -->
+      <div class="loupe" id="loupe"></div>
+    </div>
+  </section>
+
+  <!-- ================= ЦЕНЫ ================= -->
+  <section id="pricing" class="section">
+    <div class="section-head reveal">
+      <span class="kicker">почтой или лично</span>
+      <h2 class="section-title">Тарифы</h2>
+    </div>
+
+    <div class="price-grid" id="priceGrid">
+      <!-- карточки тарифов рендерятся через script.js -->
+    </div>
+  </section>
+
+  <!-- ================= О ЛАБОРАТОРИИ ================= -->
+  <section id="about" class="section about-section">
+    <div class="about-text reveal">
+      <span class="kicker">кто проявляет</span>
+      <h2 class="section-title">Лаборатория, а не завод</h2>
+      <p>
+        FRM/36 — это одна проявочная линия, один барабанный сканер и два человека,
+        которые вручную ведут каждый ролик от бачка до скана. Мы не смешиваем химию
+        для скорости и не гоняем плёнку через процесс раньше времени.
+      </p>
+      <p>
+        Химия обновляется по счётчику роликов, а не по расписанию —
+        так цвет и зерно остаются стабильными от партии к партии.
+      </p>
+    </div>
+
+    <div class="lab-log reveal" id="labLog">
+      <!-- журнал лаборатории рендерится через script.js -->
+    </div>
+  </section>
+
+  <!-- ================= ЗАЯВКА ================= -->
+  <section id="contact" class="section contact-section">
+    <div class="section-head reveal">
+      <span class="kicker">кадр 36a</span>
+      <h2 class="section-title">Отправить ролик</h2>
+    </div>
+
+    <div class="contact-grid">
+      <form class="contact-form reveal" id="rollForm">
+        <div class="form-row">
+          <label for="fName">Имя</label>
+          <input type="text" id="fName" placeholder="Как к вам обращаться" required>
+        </div>
+        <div class="form-row">
+          <label for="fContact">Телефон или email</label>
+          <input type="text" id="fContact" placeholder="Для связи по заявке" required>
+        </div>
+        <div class="form-row-split">
+          <div class="form-row">
+            <label for="fType">Тип плёнки</label>
+            <select id="fType">
+              <option>Цветная негативная (C-41)</option>
+              <option>Чёрно-белая</option>
+              <option>Слайд (E-6)</option>
+              <option>Не знаю, подскажите</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="fCount">Количество роликов</label>
+            <input type="number" id="fCount" min="1" value="1">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="fNote">Комментарий</label>
+          <textarea id="fNote" rows="3" placeholder="Особые пожелания к проявке или печати"></textarea>
+        </div>
+        <button type="submit" class="btn btn-shutter btn-full">
+          <span class="shutter-ring"></span> Записать плёнку в приём
+        </button>
+        <p class="form-status" id="formStatus"></p>
+      </form>
+
+      <div class="contact-side reveal">
+        <div class="info-card">
+          <span class="info-label">Почта</span>
+          <span class="info-value">lab@frm36.demo</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">Приём роликов</span>
+          <span class="info-value">Новокузнецк, по предзаписи</span>
+        </div>
+        <div class="info-card">
+          <span class="info-label">Часы приёма</span>
+          <span class="info-value">Вт–Сб, 11:00–19:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= ФУТЕР ================= -->
+<footer class="footer">
+  <div class="filmstrip filmstrip-top" aria-hidden="true"></div>
+  <div class="footer-inner">
+    <div class="logo">
+      <span class="logo-frame">FRM</span><span class="logo-slash">/36</span>
+    </div>
+    <p class="footer-note">36 кадров на ролике. Ни одного — в облаке.</p>
+    <p class="footer-copy">&copy; <span id="year"></span> FRM/36. Демонстрационный проект.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
