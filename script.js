@@ -1,0 +1,1 @@
+document.querySelectorAll('a').forEach(a=>a.addEventListener('mouseover',()=>a.style.opacity=.8));
