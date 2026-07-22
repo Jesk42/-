@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Захар</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #1a0b3d 0%, #3d1a6e 45%, #5b2a9e 100%);
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+    color: #f3ecff;
+  }
+
+  #snow-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 720px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(150, 80, 255, 0.35);
+    display: flex;
+    gap: 32px;
+    text-align: left;
+  }
+
+  .card-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: 2.4em;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #e0c3ff, #ffffff, #c9a8ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    width: 150px;
+  }
+
+  .tab-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #e6d9ff;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 0.95em;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  }
+
+  .tab-btn:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-1px);
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(90deg, #a074ff, #7a3fe0);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 0 18px rgba(160, 116, 255, 0.6);
+  }
+
+  .tab-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .tab-panel h2 {
+    font-size: 1.3em;
+    margin-bottom: 14px;
+    color: #e0c3ff;
+    text-align: center;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .game-box {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 1em;
+    color: #e0c3ff;
+  }
+
+  .game-btn {
+    background: linear-gradient(90deg, #a074ff, #7a3fe0);
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 0.95em;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  .snowflake-target {
+    position: absolute;
+    font-size: 1.8em;
+    cursor: pointer;
+    user-select: none;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+  }
+
+  .game-msg {
+    text-align: center;
+    color: #d6bfff;
+    font-size: 0.95em;
+    margin-top: 10px;
+  }
+
+  #guess-input {
+    width: 90px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 1em;
+    text-align: center;
+    margin-right: 8px;
+  }
+
+  .reaction-box {
+    background: #d64545;
+    transition: background 0.15s ease;
+  }
+  .reaction-box.go {
+    background: #3fbf5f;
+  }
+  .reaction-box span {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  .prank-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .prank-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #f3ecff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .prank-btn:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-1px);
+  }
+
+  #fake-off-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #333;
+    font-size: 0.9em;
+  }
+
+  #shake-target.shaking {
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px) rotate(-1deg); }
+    40% { transform: translateX(10px) rotate(1deg); }
+    60% { transform: translateX(-8px) rotate(-1deg); }
+    80% { transform: translateX(8px) rotate(1deg); }
+  }
+
+  #music-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 3;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #f3ecff;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-size: 0.95em;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s ease;
+  }
+  #music-toggle:hover {
+    background: rgba(255,255,255,0.22);
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      padding: 24px 16px;
+      gap: 14px;
+    }
+    .tabs {
+      width: 90px;
+    }
+    .tab-btn {
+      padding: 10px 8px;
+      font-size: 0.8em;
+    }
+    h1 {
+      font-size: 1.7em;
+    }
+  }
+</style>
+</head>
+<body id="shake-target">
+
+<canvas id="snow-canvas"></canvas>
+
+<div class="container">
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="snow-game">Снежинки</button>
+      <button class="tab-btn" data-tab="guess-game">Угадай число</button>
+      <button class="tab-btn" data-tab="reaction-game">Реакция</button>
+      <button class="tab-btn" data-tab="prank-game">Приколы</button>
+      <button class="tab-btn" data-tab="bot-control">Бот</button>
+    </div>
+
+    <div class="card-main">
+
+      <div class="tab-panel active" id="snow-game">
+        <h2>Поймай снежинку ❄</h2>
+        <div class="game-hud">
+          <span>Очки: <span id="game-score">0</span></span>
+          <span>Время: <span id="game-time">15</span> с</span>
+        </div>
+        <div class="game-box" id="game-box">
+          <button class="game-btn" id="game-start">Начать игру</button>
+        </div>
+        <div class="game-msg" id="game-msg">Нажимай на снежинки, пока идёт время!</div>
+      </div>
+
+      <div class="tab-panel" id="guess-game">
+        <h2>Угадай число 🔢</h2>
+        <div class="game-msg" id="guess-msg" style="margin-bottom:16px;">Я загадал число от 1 до 100. Попробуй угадать!</div>
+        <div style="text-align:center;">
+          <input type="number" id="guess-input" min="1" max="100" placeholder="?">
+          <button class="game-btn" id="guess-btn">Проверить</button>
+        </div>
+        <div class="game-msg" id="guess-result" style="margin-top:14px;"></div>
+      </div>
+
+      <div class="tab-panel" id="reaction-game">
+        <h2>Проверь реакцию ⚡</h2>
+        <div class="game-msg" id="reaction-msg">Жди зелёный цвет и жми как можно быстрее!</div>
+        <div class="game-box reaction-box" id="reaction-box" style="margin-top:14px; cursor:pointer;">
+          <span id="reaction-text">Нажми, чтобы начать</span>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="prank-game">
+        <h2>Приколы 😈</h2>
+        <div class="prank-grid">
+          <button class="prank-btn" id="prank-screen-off">🖥️ Выключить экран (нажми в любом месте чтобы вернуть)</button>
+          <button class="prank-btn" id="prank-shake">📳 Затрясти страницу</button>
+          <button class="prank-btn" id="prank-fullscreen">⛶ Полноэкранный режим</button>
+          <button class="prank-btn" id="prank-upside">🙃 Перевернуть страницу</button>
+          <button class="prank-btn" id="prank-invert">🎨 Инвертировать цвета</button>
+        </div>
+      </div>
+      <div class="tab-panel" id="bot-control">
+        <h2>Управление через бота 🤖</h2>
+        <div class="game-msg" style="margin-bottom:14px;">
+          Вставь сюда адрес своего сервера с Replit (например https://имя-репла.твой-ник.repl.co) и нажми "Подключиться".
+        </div>
+        <div style="text-align:center;">
+          <input type="text" id="bot-url-input" placeholder="https://..." style="width:80%; max-width:320px; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); color:#fff;">
+          <br>
+          <button class="game-btn" id="bot-connect-btn" style="margin-top:10px;">Подключиться</button>
+        </div>
+        <div class="game-msg" id="bot-status" style="margin-top:16px;">Статус: не подключено</div>
+        <div class="game-msg" id="bot-last" style="margin-top:6px; opacity:0.8;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="fake-off-screen">нажми, чтобы включить экран обратно</div>
+
+<button id="music-toggle">🔇 Включить музыку</button>
+<audio id="bg-music" src="music.mp3" loop></audio>
+
+<script>
+  // --- Снежинки на фоне ---
+  const canvas = document.getElementById('snow-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const FLAKE_COUNT = 120;
+  const flakes = [];
+
+  for (let i = 0; i < FLAKE_COUNT; i++) {
+    flakes.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 3 + 1.5,
+      speed: Math.random() * 1 + 0.4,
+      drift: Math.random() * 0.6 - 0.3,
+      alpha: Math.random() * 0.5 + 0.5
+    });
+  }
+
+  function drawSnow() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#ffffff';
+    for (const f of flakes) {
+      ctx.globalAlpha = f.alpha;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      f.y += f.speed;
+      f.x += f.drift;
+
+      if (f.y > h) {
+        f.y = -5;
+        f.x = Math.random() * w;
+      }
+      if (f.x > w) f.x = 0;
+      if (f.x < 0) f.x = w;
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawSnow);
+  }
+  drawSnow();
+
+  // --- Вкладки ---
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // --- Игра 1: Поймай снежинку ---
+  const gameBox = document.getElementById('game-box');
+  const gameStartBtn = document.getElementById('game-start');
+  const gameScoreEl = document.getElementById('game-score');
+  const gameTimeEl = document.getElementById('game-time');
+  const gameMsg = document.getElementById('game-msg');
+
+  let gameScore = 0;
+  let gameTimeLeft = 15;
+  let gameInterval = null;
+  let spawnInterval = null;
+  const GAME_DURATION = 15;
+
+  function spawnTarget() {
+    const target = document.createElement('div');
+    target.className = 'snowflake-target';
+    target.textContent = '❄';
+    const boxW = gameBox.clientWidth;
+    const boxH = gameBox.clientHeight;
+    target.style.left = Math.random() * (boxW - 40) + 'px';
+    target.style.top = Math.random() * (boxH - 40) + 'px';
+
+    target.addEventListener('click', () => {
+      gameScore++;
+      gameScoreEl.textContent = gameScore;
+      target.remove();
+    });
+
+    gameBox.appendChild(target);
+
+    setTimeout(() => {
+      if (target.parentNode) target.remove();
+    }, 1400);
+  }
+
+  function startSnowGame() {
+    gameScore = 0;
+    gameTimeLeft = GAME_DURATION;
+    gameScoreEl.textContent = gameScore;
+    gameTimeEl.textContent = gameTimeLeft;
+    gameMsg.textContent = 'Лови снежинки!';
+    gameBox.innerHTML = '';
+
+    spawnInterval = setInterval(spawnTarget, 700);
+    gameInterval = setInterval(() => {
+      gameTimeLeft--;
+      gameTimeEl.textContent = gameTimeLeft;
+      if (gameTimeLeft <= 0) {
+        endSnowGame();
+      }
+    }, 1000);
+  }
+
+  function endSnowGame() {
+    clearInterval(gameInterval);
+    clearInterval(spawnInterval);
+    gameBox.innerHTML = '<button class="game-btn" id="game-start">Играть ещё раз</button>';
+    document.getElementById('game-start').addEventListener('click', startSnowGame);
+    gameMsg.textContent = 'Игра окончена! Твои очки: ' + gameScore;
+  }
+
+  gameStartBtn.addEventListener('click', startSnowGame);
+
+  // --- Игра 2: Угадай число ---
+  let secretNumber = Math.floor(Math.random() * 100) + 1;
+  let guessAttempts = 0;
+  const guessInput = document.getElementById('guess-input');
+  const guessBtn = document.getElementById('guess-btn');
+  const guessResult = document.getElementById('guess-result');
+  const guessMsg = document.getElementById('guess-msg');
+
+  guessBtn.addEventListener('click', () => {
+    const val = parseInt(guessInput.value, 10);
+    if (isNaN(val)) {
+      guessResult.textContent = 'Введи число от 1 до 100!';
+      return;
+    }
+    guessAttempts++;
+    if (val === secretNumber) {
+      guessResult.textContent = 'Угадал за ' + guessAttempts + ' попыт(ку/ки/ок)! 🎉';
+      guessMsg.textContent = 'Новое число уже загадано, попробуй ещё раз!';
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      guessAttempts = 0;
+      guessInput.value = '';
+    } else if (val < secretNumber) {
+      guessResult.textContent = 'Больше! ⬆️';
+    } else {
+      guessResult.textContent = 'Меньше! ⬇️';
+    }
+  });
+
+  // --- Игра 3: Реакция ---
+  const reactionBox = document.getElementById('reaction-box');
+  const reactionText = document.getElementById('reaction-text');
+  const reactionMsg = document.getElementById('reaction-msg');
+  let reactionState = 'idle';
+  let reactionTimeout = null;
+  let reactionStart = 0;
+
+  reactionBox.addEventListener('click', () => {
+    if (reactionState === 'idle' || reactionState === 'result') {
+      reactionState = 'waiting';
+      reactionBox.classList.remove('go');
+      reactionText.textContent = 'Жди зелёный...';
+      const delay = Math.random() * 2500 + 1000;
+      reactionTimeout = setTimeout(() => {
+        reactionState = 'go';
+        reactionBox.classList.add('go');
+        reactionText.textContent = 'ЖМИ!';
+        reactionStart = Date.now();
+      }, delay);
+    } else if (reactionState === 'waiting') {
+      clearTimeout(reactionTimeout);
+      reactionState = 'result';
+      reactionBox.classList.remove('go');
+      reactionText.textContent = 'Рано! Жми ещё раз';
+    } else if (reactionState === 'go') {
+      const time = Date.now() - reactionStart;
+      reactionState = 'result';
+      reactionBox.classList.remove('go');
+      reactionText.textContent = 'Твоя реакция: ' + time + ' мс. Жми ещё раз!';
+    }
+  });
+
+  // --- Приколы ---
+  const fakeOffScreen = document.getElementById('fake-off-screen');
+  document.getElementById('prank-screen-off').addEventListener('click', () => {
+    fakeOffScreen.style.display = 'flex';
+  });
+  fakeOffScreen.addEventListener('click', () => {
+    fakeOffScreen.style.display = 'none';
+  });
+
+  const shakeTarget = document.getElementById('shake-target');
+  document.getElementById('prank-shake').addEventListener('click', () => {
+    shakeTarget.classList.remove('shaking');
+    void shakeTarget.offsetWidth;
+    shakeTarget.classList.add('shaking');
+    setTimeout(() => shakeTarget.classList.remove('shaking'), 400);
+  });
+
+  document.getElementById('prank-fullscreen').addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  let upsideDown = false;
+  document.getElementById('prank-upside').addEventListener('click', () => {
+    upsideDown = !upsideDown;
+    shakeTarget.style.transform = upsideDown ? 'rotate(180deg)' : 'none';
+  });
+
+  let inverted = false;
+  document.getElementById('prank-invert').addEventListener('click', () => {
+    inverted = !inverted;
+    shakeTarget.style.filter = inverted ? 'invert(1)' : 'none';
+  });
+
+  // --- Управление через Telegram-бота ---
+  const botUrlInput = document.getElementById('bot-url-input');
+  const botConnectBtn = document.getElementById('bot-connect-btn');
+  const botStatus = document.getElementById('bot-status');
+  const botLast = document.getElementById('bot-last');
+
+  let botUrl = localStorage.getItem('zahar-bot-url') || '';
+  if (botUrl) botUrlInput.value = botUrl;
+
+  let botPollTimer = null;
+  let lastUpdatedAt = 0;
+
+  function applyBotCommand(cmd, text) {
+    botLast.textContent = 'Последнее: "' + text + '" → ' + cmd;
+
+    if (cmd === 'snow') {
+      canvas.style.display = (canvas.style.display === 'none') ? 'block' : 'none';
+    } else if (cmd === 'music') {
+      if (!playing) { music.play().catch(() => {}); btn.textContent = '🔊 Выключить музыку'; playing = true; }
+      else { music.pause(); btn.textContent = '🔇 Включить музыку'; playing = false; }
+    } else if (cmd === 'blackout') {
+      fakeOffScreen.style.display = 'flex';
+    } else if (cmd === 'shake') {
+      shakeTarget.classList.remove('shaking');
+      void shakeTarget.offsetWidth;
+      shakeTarget.classList.add('shaking');
+      setTimeout(() => shakeTarget.classList.remove('shaking'), 400);
+    } else if (cmd === 'flip') {
+      upsideDown = !upsideDown;
+      shakeTarget.style.transform = upsideDown ? 'rotate(180deg)' : 'none';
+    } else if (cmd === 'invert') {
+      inverted = !inverted;
+      shakeTarget.style.filter = inverted ? 'invert(1)' : 'none';
+    }
+  }
+
+  async function pollBot() {
+    if (!botUrl) return;
+    try {
+      const res = await fetch(botUrl.replace(/\/$/, '') + '/state');
+      const data = await res.json();
+      botStatus.textContent = 'Статус: подключено ✅';
+      if (data.updatedAt && data.updatedAt !== lastUpdatedAt) {
+        lastUpdatedAt = data.updatedAt;
+        applyBotCommand(data.command, data.text);
+      }
+    } catch (e) {
+      botStatus.textContent = 'Статус: не удалось подключиться ❌';
+    }
+  }
+
+  botConnectBtn.addEventListener('click', () => {
+    botUrl = botUrlInput.value.trim();
+    localStorage.setItem('zahar-bot-url', botUrl);
+    if (botPollTimer) clearInterval(botPollTimer);
+    botStatus.textContent = 'Статус: подключаюсь...';
+    pollBot();
+    botPollTimer = setInterval(pollBot, 1500);
+  });
+
+  if (botUrl) {
+    botPollTimer = setInterval(pollBot, 1500);
+    pollBot();
+  }
+
+  // --- Музыка ---
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-toggle');
+  let playing = false;
+
+  btn.addEventListener('click', () => {
+    if (!playing) {
+      music.play().catch(() => {});
+      btn.textContent = '🔊 Выключить музыку';
+      playing = true;
+    } else {
+      music.pause();
+      btn.textContent = '🔇 Включить музыку';
+      playing = false;
+    }
+  });
+</script>
+
+</body>
+</html>
